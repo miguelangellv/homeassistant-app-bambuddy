@@ -51,6 +51,41 @@ No manual intervention required. 🎉
 
 ---
 
+## ⚠️ Known Limitations
+ 
+### HA Ingress — Not Supported
+ 
+HA Ingress is currently **not supported**.
+ 
+**Why:** Bambuddy's frontend SPA makes API calls to an absolute path (`/api/v1/...`). HA Ingress serves the addon under a rotating per-session subpath (`/api/hassio_ingress/<token>/`), which means API calls never reach Bambuddy. This requires a fix in Bambuddy core.
+ 
+---
+ 
+### Embedding via Webpage Panel — LAN only
+ 
+As a workaround, Bambuddy can be embedded inside the Home Assistant dashboard using a **Webpage Panel** or **Webpage Card**:
+ 
+1. In Home Assistant go to **Settings → Dashboards** (or edit your dashboard)
+2. Add a **Webpage Card** or **Webpage Panel**
+3. Set the URL to:
+   ```
+   http://<your-ha-ip>:8000
+   ```
+   Example: `http://192.168.178.3:8000`
+4. Under the addon configuration, add your HA URL to **Allowed Origin URLs**:
+   ```
+   http://<your-ha-ip>:8123
+   http://homeassistant.local:8123
+   ```
+ 
+**Limitations of this approach:**
+- Works on **LAN only** — not available when accessing HA remotely via HTTPS (Nabu Casa, custom domain, etc.)
+- When accessing HA over HTTPS externally, browsers block HTTP iframes (mixed content policy)
+ 
+Full Ingress support will be added once the upstream API path issue is resolved.
+
+---
+
 ## ⚠️ Disclaimer
  
 This is **not** an official release by the BamBuddy developer. This project simply packages [BamBuddy](https://github.com/maziggy/bambuddy) as a native Home Assistant App for easy installation and updates.
