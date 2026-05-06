@@ -64,26 +64,17 @@ jobs:
         id: get_current
         run: |
           CURRENT=$(grep '^version:' bambuddy-daily/config.yaml | sed 's/.*"\(.*\)"/\1/')
-          TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:maziggy/bambuddy:pull" \
-            | jq -r '.token')
-          CURRENT_DIGEST=$(curl -sI -H "Authorization: Bearer $TOKEN" \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-            -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
-            "https://ghcr.io/v2/maziggy/bambuddy/manifests/daily" \
-            | grep -i "docker-content-digest" | tr -d '\r' | awk '{print $2}')
-          CURRENT_SHORT=$(echo "$CURRENT_DIGEST" | cut -c8-15)
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
-          echo "current_short=$CURRENT_SHORT" >> $GITHUB_OUTPUT
-          echo "Aktuelle Version: $CURRENT (SHA: $CURRENT_SHORT)"
+          echo "Aktuelle Version: $CURRENT"
 
       - name: Update config.yaml
-        if: steps.get_digest.outputs.short != steps.get_current.outputs.current_short
+        if: steps.get_digest.outputs.version != steps.get_current.outputs.current
         run: |
           sed -i 's/^version: ".*"/version: "${{ steps.get_digest.outputs.version }}"/' bambuddy-daily/config.yaml
           echo "config.yaml aktualisiert auf ${{ steps.get_digest.outputs.version }}"
 
       - name: Update CHANGELOG.md
-        if: steps.get_digest.outputs.short != steps.get_current.outputs.current_short
+        if: steps.get_digest.outputs.version != steps.get_current.outputs.current
         run: |
           python3 - <<'PYEOF'
           import os
@@ -98,7 +89,7 @@ jobs:
           NEW_BODY: ${{ steps.get_changelog.outputs.body }}
 
       - name: Commit and push
-        if: steps.get_digest.outputs.short != steps.get_current.outputs.current_short
+        if: steps.get_digest.outputs.version != steps.get_current.outputs.current
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
