@@ -1,8 +1,11 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
-ARG BUILD_FROM
+FROM ghcr.io/maziggy/bambuddy:daily AS builder
+FROM ghcr.io/home-assistant/base-python:3.14-alpine3.23
 
-FROM ghcr.io/maziggy/bambuddy:daily as builder
-FROM $BUILD_FROM
+LABEL org.opencontainers.image.title="Home Assistant Add-on: Bambuddy add-on (DAILY)"
+LABEL org.opencontainers.image.description="A powerful, self-hosted print archive and management system for Bambu Lab 3D printers."
+LABEL org.opencontainers.image.source="https://github.com/Spegeli/homeassistant-app-bambuddy"
+LABEL org.opencontainers.image.licenses="MIT License"
 
 WORKDIR /app
 
