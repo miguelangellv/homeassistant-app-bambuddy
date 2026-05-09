@@ -37,7 +37,7 @@ Click the button below to automatically add the repository to Home Assistant:
 
 [![Add Repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/Spegeli/homeassistant-app-bambuddy)
 
-### Manually
+Or add it manually:
 
 1. In Home Assistant, go to **Settings → Apps → App Store**
 2. Click the three-dot menu → **Repositories**
