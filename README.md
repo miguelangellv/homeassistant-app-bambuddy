@@ -8,7 +8,8 @@
   <a href="https://github.com/maziggy/bambuddy">Bambuddy</a>, delivered as a first-class Home Assistant App for easy installation and updates.
 </p>
 <p align="center">
-  <strong>Self-hosted print archive and management system for Bambu Lab 3D printers</strong>
+  <strong>Your printers. No cloud. Your rules.</strong><br>
+  Self-hosted command center for Bambu Lab &mdash; from one A1 to a 40-printer farm.
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/Spegeli/homeassistant-app-bambuddy/main/bambuddy/config.yaml&query=$.version&label=stable&color=blue">
