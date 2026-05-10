@@ -4,7 +4,7 @@
 
 This app integrates [BamBuddy](https://github.com/maziggy/bambuddy) into Home Assistant — a self-hosted command center for Bambu Lab — from one A1 to a 40-printer farm. 
 
-<stronge>Your Printers. No Cloud. Your Rules.</stronge>
+<strong>Your Printers. No Cloud. Your Rules.</strong>
 
 It allows you to monitor and manage your prints directly from your Home Assistant instance.
 
