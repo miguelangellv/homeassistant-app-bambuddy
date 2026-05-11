@@ -2,18 +2,6 @@
 
 ## Configuration Options
 
-### Debug Mode
-
-Enables verbose debug logging for Bambuddy. Useful when troubleshooting issues or reporting bugs.
-
-| Option | Type | Default |
-|--------|------|---------|
-| `debug` | `bool` | `false` |
-
-**When to enable:** Only enable debug mode when actively diagnosing a problem. Debug logging can produce a large amount of output and may impact performance.
-
----
-
 ### Trusted Frame Origins
 
 A list of URLs that are allowed to embed Bambuddy in an iframe. Required when using a **Webpage Card** or **Webpage Panel** inside the Home Assistant dashboard.
@@ -34,6 +22,18 @@ https://my-ha-instance.example.com
 Add every origin from which you access Home Assistant. If you access HA from multiple addresses (local IP, local hostname, external domain), add all of them.
 
 > **Note:** iFrame embedding via an HTTPS origin into an HTTP Bambuddy instance (port 8000) will be blocked by the browser due to mixed content policy. This approach works reliably on LAN with HTTP only.
+
+---
+
+### Debug Mode
+
+Enables verbose debug logging for Bambuddy. Useful when troubleshooting issues or reporting bugs.
+
+| Option | Type | Default |
+|--------|------|---------|
+| `debug` | `bool` | `false` |
+
+**When to enable:** Only enable debug mode when actively diagnosing a problem. Debug logging can produce a large amount of output and may impact performance.
 
 ---
 
@@ -62,7 +62,7 @@ To allow your slicer (Bambu Studio / OrcaSlicer) to trust the Virtual Printer's 
 **1. Locate the certificate in Home Assistant**
 
 Open the **File Editor** and navigate to:
-`addon_configs` → `[slug]_bambuddy_beta` → `data` → `virtual_printer` → `certs` → `bbl_ca.crt`
+`addon_configs` → `[slug]_bambuddy_daily` → `data` → `virtual_printer` → `certs` → `bbl_ca.crt`
 
 Copy the entire contents of this file (from `-----BEGIN CERTIFICATE-----` to `-----END CERTIFICATE-----`).
 
