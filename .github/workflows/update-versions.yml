@@ -2,7 +2,7 @@ name: Auto-Update BamBuddy Versions
 
 on:
   schedule:
-    - cron: '0 * * * *'  # stündlich
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 env:
@@ -37,42 +37,31 @@ jobs:
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          echo "Gefundene Version: $LATEST"
+          echo "Found version: $LATEST"
 
       - name: Get current version from Dockerfile
         id: get_current
         run: |
           CURRENT=$(grep '^ARG BAMBUDDY_VERSION=' bambuddy/Dockerfile | sed 's/ARG BAMBUDDY_VERSION=//')
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
-          echo "Aktuelle Version: $CURRENT"
+          echo "Current version: $CURRENT"
 
-      - name: Update Dockerfile und config.yaml
+      - name: Update Dockerfile and config.yaml
         if: steps.get_version.outputs.latest != '' && steps.get_version.outputs.latest != steps.get_current.outputs.current
         run: |
           sed -i 's/^ARG BAMBUDDY_VERSION=.*/ARG BAMBUDDY_VERSION=${{ steps.get_version.outputs.latest }}/' bambuddy/Dockerfile
           sed -i 's/^version: ".*"/version: "${{ steps.get_version.outputs.latest }}"/' bambuddy/config.yaml
-          echo "Beide Dateien aktualisiert auf ${{ steps.get_version.outputs.latest }}"
 
       - name: Update CHANGELOG.md
         if: steps.get_version.outputs.latest != '' && steps.get_version.outputs.latest != steps.get_current.outputs.current
         run: |
           python3 - <<'PYEOF'
           import os
-
           version = os.environ.get("NEW_VERSION", "")
           body = os.environ.get("NEW_BODY", "")
-
-          new_entry = f"## {version}\n\n{body}\n\n"
-
-          existing = ""
-          if os.path.exists("bambuddy/CHANGELOG.md"):
-              with open("bambuddy/CHANGELOG.md", "r") as f:
-                  existing = f.read()
-
           with open("bambuddy/CHANGELOG.md", "w") as f:
-              f.write(new_entry)
-
-          print("CHANGELOG.md aktualisiert")
+              f.write(f"## {version}\n\n{body}\n\n")
+          print("CHANGELOG.md updated")
           PYEOF
         env:
           NEW_VERSION: ${{ steps.get_version.outputs.latest }}
@@ -84,7 +73,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bambuddy/Dockerfile bambuddy/config.yaml bambuddy/CHANGELOG.md
-          git commit -m "chore: update BamBuddy ${{ steps.get_current.outputs.current }} → ${{ steps.get_version.outputs.latest }}"
+          git commit -m "chore: update BamBuddy ${{ steps.get_current.outputs.current }} -> ${{ steps.get_version.outputs.latest }}"
           git push
 
   # ============================================================
@@ -114,42 +103,31 @@ jobs:
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          echo "Gefundene Version: $LATEST"
+          echo "Found version: $LATEST"
 
       - name: Get current version from Dockerfile
         id: get_current
         run: |
           CURRENT=$(grep '^ARG BAMBUDDY_VERSION=' bambuddy-beta/Dockerfile | sed 's/ARG BAMBUDDY_VERSION=//')
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
-          echo "Aktuelle Version: $CURRENT"
+          echo "Current version: $CURRENT"
 
-      - name: Update Dockerfile und config.yaml
+      - name: Update Dockerfile and config.yaml
         if: steps.get_version.outputs.latest != '' && steps.get_version.outputs.latest != steps.get_current.outputs.current
         run: |
           sed -i 's/^ARG BAMBUDDY_VERSION=.*/ARG BAMBUDDY_VERSION=${{ steps.get_version.outputs.latest }}/' bambuddy-beta/Dockerfile
           sed -i 's/^version: ".*"/version: "${{ steps.get_version.outputs.latest }}"/' bambuddy-beta/config.yaml
-          echo "Beide Dateien aktualisiert auf ${{ steps.get_version.outputs.latest }}"
 
       - name: Update CHANGELOG.md
         if: steps.get_version.outputs.latest != '' && steps.get_version.outputs.latest != steps.get_current.outputs.current
         run: |
           python3 - <<'PYEOF'
           import os
-
           version = os.environ.get("NEW_VERSION", "")
           body = os.environ.get("NEW_BODY", "")
-
-          new_entry = f"## {version}\n\n{body}\n\n"
-
-          existing = ""
-          if os.path.exists("bambuddy-beta/CHANGELOG.md"):
-              with open("bambuddy-beta/CHANGELOG.md", "r") as f:
-                  existing = f.read()
-
           with open("bambuddy-beta/CHANGELOG.md", "w") as f:
-              f.write(new_entry)
-
-          print("CHANGELOG.md aktualisiert")
+              f.write(f"## {version}\n\n{body}\n\n")
+          print("CHANGELOG.md updated")
           PYEOF
         env:
           NEW_VERSION: ${{ steps.get_version.outputs.latest }}
@@ -161,7 +139,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bambuddy-beta/Dockerfile bambuddy-beta/config.yaml bambuddy-beta/CHANGELOG.md
-          git commit -m "chore: update BamBuddy ${{ steps.get_current.outputs.current }} → ${{ steps.get_version.outputs.latest }}"
+          git commit -m "chore: update BamBuddy ${{ steps.get_current.outputs.current }} -> ${{ steps.get_version.outputs.latest }}"
           git push
 
   # ============================================================
@@ -193,7 +171,7 @@ jobs:
             | grep -i "docker-content-digest" | tr -d '\r' | awk '{print $2}')
 
           if [ -z "$DIGEST" ]; then
-            echo "ERROR: Digest konnte nicht abgerufen werden!"
+            echo "ERROR: Digest could not be fetched!"
             exit 1
           fi
 
@@ -227,13 +205,12 @@ jobs:
         run: |
           CURRENT=$(grep '^version:' bambuddy-daily/config.yaml | sed 's/.*"\(.*\)"/\1/')
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
-          echo "Aktuelle Version: $CURRENT"
+          echo "Current version: $CURRENT"
 
       - name: Update config.yaml
         if: steps.get_digest.outputs.version != steps.get_current.outputs.current
         run: |
           sed -i 's/^version: ".*"/version: "${{ steps.get_digest.outputs.version }}"/' bambuddy-daily/config.yaml
-          echo "config.yaml aktualisiert auf ${{ steps.get_digest.outputs.version }}"
 
       - name: Update CHANGELOG.md
         if: steps.get_digest.outputs.version != steps.get_current.outputs.current
@@ -244,7 +221,7 @@ jobs:
           body = os.environ.get("NEW_BODY", "")
           with open("bambuddy-daily/CHANGELOG.md", "w") as f:
               f.write(f"## {version}\n\n{body}\n\n")
-          print("CHANGELOG.md aktualisiert")
+          print("CHANGELOG.md updated")
           PYEOF
         env:
           NEW_VERSION: ${{ steps.get_digest.outputs.version }}
@@ -256,5 +233,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bambuddy-daily/config.yaml bambuddy-daily/CHANGELOG.md
-          git diff --staged --quiet || git commit -m "chore: update BamBuddy Daily ${{ steps.get_current.outputs.current }} → ${{ steps.get_digest.outputs.version }}"
+          git diff --staged --quiet || git commit -m "chore: update BamBuddy Daily ${{ steps.get_current.outputs.current }} -> ${{ steps.get_digest.outputs.version }}"
           git push

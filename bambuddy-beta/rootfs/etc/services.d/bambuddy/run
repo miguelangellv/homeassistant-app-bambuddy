@@ -26,13 +26,32 @@ fi
 export HA_URL="http://supervisor/core"
 export HA_TOKEN="${SUPERVISOR_TOKEN}"
 
-# Trusted Frame Origins aus HA Config lesen und zusammenführen
+# Trusted Frame Origins
 if bashio::config.exists 'trusted_frame_origins'; then
   ORIGINS=$(bashio::config 'trusted_frame_origins | join(",")')
   if [ -n "${ORIGINS}" ]; then
     bashio::log.info "Setting TRUSTED_FRAME_ORIGINS: ${ORIGINS}"
     export TRUSTED_FRAME_ORIGINS="${ORIGINS}"
   fi
+fi
+
+# External storage (Share / Media)
+EXTERNAL_ROOTS=""
+if bashio::config.true 'enable_share'; then
+  bashio::log.info "Enabling /share as external root"
+  EXTERNAL_ROOTS="/share"
+fi
+if bashio::config.true 'enable_media'; then
+  bashio::log.info "Enabling /media as external root"
+  if [ -n "${EXTERNAL_ROOTS}" ]; then
+    EXTERNAL_ROOTS="${EXTERNAL_ROOTS}:/media"
+  else
+    EXTERNAL_ROOTS="/media"
+  fi
+fi
+if [ -n "${EXTERNAL_ROOTS}" ]; then
+  bashio::log.info "Setting BAMBUDDY_EXTERNAL_ROOTS: ${EXTERNAL_ROOTS}"
+  export BAMBUDDY_EXTERNAL_ROOTS="${EXTERNAL_ROOTS}"
 fi
 
 # Self-signed CA certificate support

@@ -16,15 +16,21 @@ privileged:
 homeassistant_api: true
 map:
   - addon_config:rw
+  - share:rw
+  - media:rw
 options:
   trusted_frame_origins:
     - "http://homeassistant.local:8123"
+  enable_share: false
+  enable_media: false
   use_system_trust_store: false
   certfile: "custom_ca.crt"
   debug: false
 schema:
   trusted_frame_origins:
     - str
+  enable_share: bool
+  enable_media: bool
   use_system_trust_store: bool
   certfile: str
   debug: bool
